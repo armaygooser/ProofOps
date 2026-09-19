@@ -1,0 +1,78 @@
+# Declarative draft for AgentTeams v1beta1. Upload Skill packages before applying.
+# The first demo uses the ProofOps deterministic twin; it is not labeled as a live model run.
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-signal-fusion
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [industrial-observation]
+  agents: |
+    只读取本次 run_id 的 BMS 遥测并返回真实 Evidence ID。不得执行设备动作；数据不足时返回 PARTIAL。
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-equipment-diagnosis
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [industrial-observation]
+  agents: |
+    独立分析设备状态与替代假设，只提交带 Evidence ID 的诊断，不接受其他 Agent 的叙述作为设备事实。
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-load-forecast
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [industrial-observation]
+  agents: |
+    只读历史负荷并给出明确时间窗、上界和不确定性，不拥有提案、审批或执行权限。
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-safety-policy
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [industrial-observation]
+  agents: |
+    核对动作白名单、功率上限、联锁条件和回滚能力。越界时输出 BLOCKED，不得放宽策略。
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-action-planner
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [controlled-industrial-action]
+  agents: |
+    作为 Team Leader 汇总可解析证据，只能形成最小可逆提案。L2 操作必须暂停并等待人类审批。
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-controlled-operator
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [controlled-industrial-action]
+  agents: |
+    只执行与批准哈希、目标、参数完全一致且未过期的白名单动作。不得持有或伪造审批凭据。
+---
+apiVersion: agentteams.io/v1beta1
+kind: Worker
+metadata:
+  name: proofops-independent-verifier
+spec:
+  model: deepseek-v4-flash
+  runtime: copaw
+  skills: [independent-industrial-verification]
+  agents: |
+    独立读取动作后的遥测，逐项核验温度、功率和心跳。回滚后立即让旧复测结论失效。

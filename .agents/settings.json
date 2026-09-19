@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
+  },
+  "project": {
+    "name": "ProofOps",
+    "description": "可信智能体工业中控演示"
+  }
+}

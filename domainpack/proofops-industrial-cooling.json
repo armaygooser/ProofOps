@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "domain_pack": "proofops.industrial.cooling",
+  "display_name": "B2 冷却异常处置",
+  "governance_contract": "CyberGuard controlled-action v0.14",
+  "safety_boundary": "isolated_digital_twin",
+  "agents": [
+    {"id": "signal-fusion", "name": "信号融合", "permission": "read:telemetry", "output": "温度、功率与心跳关联证据"},
+    {"id": "equipment-diagnosis", "name": "设备诊断", "permission": "read:equipment", "output": "主冷机效率衰减诊断"},
+    {"id": "load-forecast", "name": "负荷预测", "permission": "read:history", "output": "未来 15 分钟热负荷预测"},
+    {"id": "safety-policy", "name": "安全策略", "permission": "read:policy", "output": "功率上限与联锁条件"},
+    {"id": "action-planner", "name": "动作规划", "permission": "propose:action", "output": "最小可逆动作提案"},
+    {"id": "controlled-operator", "name": "受控执行", "permission": "execute:approved", "output": "仅执行哈希绑定且未过期的提案"},
+    {"id": "independent-verifier", "name": "独立复测", "permission": "read:post-state", "output": "独立验证温度、功率与心跳"}
+  ],
+  "action_allowlist": [
+    {
+      "action": "activate_backup_cooling",
+      "target": "B2-CHILLER-02",
+      "risk": "L2",
+      "reversible": true,
+      "approval_required": true,
+      "ttl_minutes": 15
+    }
+  ],
+  "verification_contract": {
+    "temperature_c_lte": 26.0,
+    "power_kw_lte": 500.0,
+    "heartbeat_pct_gte": 99.0,
+    "verifier_must_be_independent": true
+  },
+  "initial_twin": {
+    "zone": "B2 数据机房",
+    "temperature_c": 31.8,
+    "power_kw": 436.0,
+    "heartbeat_pct": 96.7,
+    "primary_chiller": "degraded",
+    "backup_chiller": "standby"
+  }
+}
