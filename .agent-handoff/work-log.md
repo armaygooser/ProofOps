@@ -2,6 +2,8 @@
 
 ## 2026-09-19 — GLM
 
+- Added remote `origin` → `https://github.com/armaygooser/ProofOps.git` (user-provided) and pushed `main` (through `e213962`); branch tracks `origin/main`, verified in sync via `git ls-remote`.
+- Secrets scan over tracked files before publishing: only false positives (docs wording, CSS class names); `.env.example` holds a clearly-labeled demo HMAC placeholder; no `.env` tracked.
 - Resumed from `GLM_HANDOFF.md`; verified `git status` clean on `main`.
 - Verified the running Docker demo: API `/health` ok, web `:18766` returns 200, nginx proxy for `/api/demo` returns 200.
 - Found that the earlier `docs/reports/proofops-dashboard.png` only captured the loading transition ("正在连接证控中枢…"), so the previous "page loaded" validation never visually confirmed the real UI.

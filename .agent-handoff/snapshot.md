@@ -6,7 +6,7 @@
 - Last agent: GLM
 - Workspace root: `D:\Projects\ProofOps`
 - Current objective: Deliver the ProofOps industrial control demonstration with Ant Design UI, CyberGuard governance reuse, and AgentTeams Element Web launch support.
-- Current status: implementation complete; Docker demo verified healthy and at the initial incident state; the previously blocked visual UI inspection is now closed via `docs/reports/proofops-dashboard-live.png` (full UI renders correctly, only trivial cosmetic notes).
+- Current status: implementation complete; Docker demo verified healthy and at the initial incident state; visual UI inspection closed via `docs/reports/proofops-dashboard-live.png`; published to GitHub at `https://github.com/armaygooser/ProofOps` (remote `origin`, `main` in sync through `e213962`).
 - Immediate next actions:
   1. Collect the user's visual feedback on the live control-room UI at `http://127.0.0.1:18766`.
   2. Apply any requested visual changes in `frontend/src/App.tsx` and `frontend/src/styles/global.css` (optional candidates already noted: 04/05 panel bottom alignment, rollback button edge spacing).

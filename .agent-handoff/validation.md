@@ -13,6 +13,9 @@
 | 2026-09-19 | `docker compose up -d` / `docker compose ps` | passed | API is healthy and web container is running on port 18766. |
 | 2026-09-19 | `.venv\\Scripts\\python.exe scripts\\smoke_http.py` | passed | Published web endpoint completed investigate → propose → approve → execute → verify → rollback; final audit valid and verification invalidated. |
 
+| 2026-09-19 | Secrets scan before publish: `git grep` for key/token/password patterns | passed | Only false positives (docs wording, CSS class names); `.env.example` holds a labeled demo HMAC placeholder; no `.env` tracked. |
+| 2026-09-19 | `git remote add origin` + `git push -u origin main` + `git ls-remote origin` | passed | Published to `https://github.com/armaygooser/ProofOps`; `main` in sync through `e213962`; stored Git Credential Manager credentials used (gh CLI not authenticated). |
+
 ## Validation Caveats
 
 - AgentTeams resources are reviewable drafts based on existing CyberGuard v1beta1 Worker syntax; they were not applied to a live Controller in this session.
