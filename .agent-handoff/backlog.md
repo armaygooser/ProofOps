@@ -4,6 +4,12 @@
 
 - [ ] Review the running control-room UI and request any visual changes.
 
+## CyberGuard Runtime Reuse
+
+- [ ] Extract a versioned `cyberguard-governance` Python package from CyberGuard.
+- [ ] Refactor the CyberGuard response executor to consume the shared package without weakening its tests or allowlist.
+- [ ] Pin ProofOps to a CyberGuard tag or commit and replace the local contract adaptation with the shared package where appropriate.
+
 ## Final Deployment Follow-ups
 
 - [ ] Apply `agentteams/workers.yaml` and package the three Skills on the actual AgentTeams Controller.
@@ -12,7 +18,8 @@
 
 ## GitHub Publication
 
-- [ ] Create a separate GitHub repository and add its remote only after the user chooses the owner/name and visibility.
+- [x] Publish the independent repository at `https://github.com/armaygooser/ProofOps`.
+- [x] Add a GitHub-facing README that explains the CyberGuard migration, quick start and verified demo boundary.
 
 ## Optional Production Work
 

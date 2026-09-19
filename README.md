@@ -1,30 +1,91 @@
 # ProofOps · 证控中枢
 
-> 面向工业操作的可信智能体决策系统。七个 Agent 调查，人类批准，受控执行器落地，独立角色复测，所有操作由哈希记录并可回滚。
+[![CI](https://github.com/armaygooser/ProofOps/actions/workflows/ci.yml/badge.svg)](https://github.com/armaygooser/ProofOps/actions/workflows/ci.yml)
+[![CyberGuard](https://img.shields.io/badge/基座-CyberGuard-00d9ff)](https://github.com/elsechord/CyberGuard)
+[![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)](frontend/)
+[![Ant Design](https://img.shields.io/badge/Ant%20Design-6-1677ff?logo=antdesign&logoColor=white)](frontend/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)](backend/)
+[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-ProofOps 是独立于 CyberGuard 的演示产品，用 B2 冷却异常说明 CyberGuard 的治理模式可以迁移到工业运维。它根据 CyberGuard v0.14 的治理契约实现本地工业适配器，同时用独立领域包约束工业动作，避免放宽原安全产品的动作白名单。
+> **由 [CyberGuard](https://github.com/elsechord/CyberGuard) 可信智能体治理基座迁移建立的工业中控演示系统。**
+> 七个 Agent 负责调查与协作，人类负责最终审批；系统通过证据哈希链、精确审批绑定、独立复测和可验证回滚，让每一步决策都能追踪、校验和撤销。
 
-> **演示边界：** 哈希、HMAC 审计、审批绑定、状态门和回滚是真实后端逻辑；工业遥测、七 Agent 调查、设备回执和独立复测环境是确定性模拟。当前没有运行时连接 CyberGuard、真实 BMS/PLC 或 AgentTeams Worker。详见 [演示真实性边界](docs/DEMO_TRUTH_BOUNDARY.md)。
+![ProofOps 工业智能体中控台](docs/reports/proofops-dashboard-live.png)
 
-## 60 秒看懂
+## 为什么有 ProofOps
 
-1. **七智能体调查**：信号融合、设备诊断、负荷预测、安全策略、动作规划、受控执行、独立复测，各自拥有最小权限。
-2. **人类保留权力**：Agent 只能形成提案；L2 操作必须由值班总管批准，批准记录绑定精确提案 SHA-256，并设置 15 分钟有效期。
-3. **可验证执行**：数字孪生执行 `BMS.START B2-CHILLER-02`，回执和状态摘要进入 HMAC 串联操作链。
-4. **独立复测**：温度 ≤26°C、功率 ≤500kW、心跳 ≥99% 三项均满足才通过。
-5. **可控回滚**：回滚绑定执行记录哈希；完成后旧复测结论自动失效。
+CyberGuard 最初面向安全审计：多个智能体分权调查，受控执行器实施动作，独立角色复核结果，并用哈希证据链记录整个决策过程。
+
+ProofOps 将这套治理闭环迁移到工业运维，以 **B2 冷却系统异常** 为演示场景。领域对象从安全告警、主机和响应动作，替换为工业遥测、冷却设备和 BMS 指令；可信决策机制保持一致：
+
+```mermaid
+flowchart LR
+    A[异常信号] --> B[七 Agent 分权调查]
+    B --> C[证据固定与动作提案]
+    C --> D{人类审批}
+    D -->|批准| E[受控执行器]
+    D -->|拒绝| X[终止执行]
+    E --> F[独立复测]
+    F -->|通过| G[闭环归档]
+    F -->|失败| H[回滚]
+    H --> I[旧复测结论失效]
+```
+
+这说明 CyberGuard 的核心价值不局限于网络安全，而是一套可迁移的**高风险智能体决策与执行基座**。
+
+## 从 CyberGuard 迁移了什么
+
+| CyberGuard 治理能力 | ProofOps 工业领域适配 |
+|---|---|
+| Evidence ID、内容摘要与封装摘要 | BMS 快照和七个 Agent 调查结论分别生成 SHA-256 |
+| 七角色权限隔离与分工协作 | 信号融合、设备诊断、负荷预测、安全策略、动作规划、受控执行、独立复测 |
+| 高风险动作允许列表 | 只允许 `activate_backup_cooling / B2-CHILLER-02` |
+| L2 人工审批 | 值班总管批准，审批记录绑定完整提案哈希并在 15 分钟后过期 |
+| HMAC 串联操作审计 | 提案、批准、执行和回滚形成 HMAC-SHA256 操作链 |
+| 幂等执行与工具回执 | 数字孪生执行 `BMS.START/BMS.STOP` 并返回可核验回执 |
+| 独立 Recovery Verifier | 独立检查温度、功率和设备心跳，三项满足才通过 |
+| 回滚关闭语义 | 回滚绑定原执行记录哈希，并立即使旧复测结论失效 |
+
+迁移来源、基线文件和逐项对应关系见 [CyberGuard 基座复用说明](docs/CYBERGUARD_REUSE.md)。
+
+## 60 秒演示流程
+
+1. 点击 **一键演示至审批**，生成 B2 冷却异常、七 Agent 调查结果和动作提案。
+2. 查看每条证据的 SHA-256，以及提案所绑定的证据集合。
+3. 由值班总管输入身份并批准，系统将批准记录绑定到当前提案哈希。
+4. 执行备用冷却启动指令，查看数字孪生回执和新的审计链节点。
+5. 运行独立复测，验证温度、功率和心跳是否达到安全阈值。
+6. 点击回滚，系统绑定原执行哈希、停止备用设备，并让旧复测结论失效。
+
+整个流程中，Agent 只能调查和形成提案，最终执行权始终由人类掌握。
+
+## 核心能力
+
+- **七 Agent 分权协作**：角色拥有明确职责和最小权限，调查结果独立留痕。
+- **Human in the Loop**：高风险动作必须经过人工审批，审批不能复用于其他提案。
+- **证据哈希链**：内容摘要、前序记录哈希和 HMAC 鉴真共同保证审计记录可校验。
+- **状态机约束**：调查、提案、审批、执行、复测与回滚必须按合法顺序发生。
+- **独立复测**：执行者不能自行宣布成功，系统使用独立阶段重新观察设备状态。
+- **可验证回滚**：回滚操作指向原执行记录，且会关闭已经失效的成功结论。
+- **领域隔离**：工业动作使用 ProofOps 自己的白名单，不修改 CyberGuard 的安全动作边界。
 
 ## 一键启动
 
-需要 Docker Desktop：
+需要安装并启动 Docker Desktop：
 
 ```powershell
+git clone https://github.com/armaygooser/ProofOps.git
+cd ProofOps
 docker compose up --build
 ```
 
-浏览器打开 <http://127.0.0.1:18766>。点击 **一键演示至审批**，然后依次体验批准、执行、复测和回滚。
+打开 <http://127.0.0.1:18766>，点击 **一键演示至审批** 即可体验完整闭环。
+
+后端健康检查地址：<http://127.0.0.1:18765/health>。
 
 ### 本地开发
+
+需要 Python 3.12+ 和 Node.js：
 
 ```powershell
 npm --prefix frontend install
@@ -32,17 +93,60 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 ```
 
-终端 1：
+启动后端：
 
 ```powershell
 .\.venv\Scripts\python.exe -m uvicorn proofops_api.app:app --host 127.0.0.1 --port 18765
 ```
 
-终端 2：
+另开终端启动前端：
 
 ```powershell
 npm --prefix frontend run dev -- --host 127.0.0.1
 ```
+
+## 技术架构
+
+```text
+Ant Design 控制台
+        │
+        ▼
+FastAPI 状态机与场景引擎
+        │
+        ├── CyberGuard 治理契约适配
+        │   ├── SHA-256 证据摘要
+        │   ├── HMAC 串联审计
+        │   ├── 提案与审批精确绑定
+        │   └── 回滚关闭语义
+        │
+        ├── 工业领域包与动作白名单
+        └── B2 冷却系统数字孪生
+```
+
+| 目录 | 内容 |
+|---|---|
+| [`frontend/`](frontend/) | React、TypeScript、Ant Design 工业中控页面 |
+| [`backend/`](backend/) | FastAPI、治理适配器、状态机和数字孪生 |
+| [`domainpack/`](domainpack/) | 工业角色、动作白名单与复测契约 |
+| [`agentteams/`](agentteams/) | 七 Worker 草案、权限 Skill 和 Element Web 打开方式 |
+| [`docs/`](docs/) | 复用说明、真实性边界、演示脚本和设计记录 |
+
+## 当前复用层级与真实性边界
+
+当前版本是**基于 CyberGuard v0.14 治理契约实现的本地工业适配原型**：
+
+- 实时运行：FastAPI 状态机、SHA-256、HMAC 审计链、审批绑定、审批过期、动作白名单、回滚语义和容器服务。
+- 确定性模拟：工业遥测、七 Agent 调查内容、BMS/PLC 设备回执和独立复测环境。
+- 当前未运行时调用 CyberGuard 在线 API，也未直接导入 CyberGuard Python 包。
+- 当前未连接真实工业设备，AgentTeams Worker 和 Element Web Service Publishing 仍需在比赛环境部署。
+
+这一边界让演示既能证明跨领域迁移可行，也不会把数字孪生描述成生产系统。完整说明见 [演示真实性边界](docs/DEMO_TRUTH_BOUNDARY.md)。
+
+## AgentTeams / Element Web
+
+仓库提供七个 Worker 草案和三个权限隔离 Skill。部署到 AgentTeams Controller 后，可通过 Service Publishing 发布 18766 端口，并从 Element Web 房间打开中控台。
+
+具体步骤见 [Element Web 接入说明](agentteams/ELEMENT_LAUNCH.md)。在获得真实 Worker 和工具回执前，界面中的确定性调查轨迹不会标记为在线模型运行。
 
 ## 验证
 
@@ -53,38 +157,12 @@ npm --prefix frontend test
 npm --prefix frontend run build
 ```
 
-## CyberGuard 复用边界
+GitHub Actions 会在每次 push 和 pull request 时运行后端检查、后端测试、前端测试和生产构建。
 
-`backend/proofops_api/governance.py` 从 CyberGuard v0.14 的 `services/response-executor/app/main.py` 提取并领域化了以下规则：
+## 安全说明
 
-- 规范 JSON 的 SHA-256 记录摘要；
-- `previous_record_sha256` 串联与 HMAC-SHA256 鉴真；
-- 提案、审批和执行之间的精确哈希绑定；
-- 审批有效期、幂等执行与回滚关闭语义；
-- 执行后独立复测，回滚后旧结论失效。
-
-工业动作 `activate_backup_cooling` 位于 ProofOps 独立白名单中。CyberGuard 原有安全动作白名单没有被修改。详见 [CYBERGUARD_REUSE.md](docs/CYBERGUARD_REUSE.md)。
-
-## AgentTeams / Element Web
-
-ProofOps 随附七个 Worker 草案和三个权限隔离 Skill。部署控制台后，通过 AgentTeams Service Publishing 发布 18766 端口，在 Matrix 房间投递发布地址，即可从 Element Web 打开控制台。
-
-操作步骤见 [ELEMENT_LAUNCH.md](agentteams/ELEMENT_LAUNCH.md)。当前确定性演示不会冒充真实 AgentTeams 模型运行。
-
-## 目录
-
-```text
-frontend/       React + TypeScript + Ant Design 中控页面
-backend/        FastAPI、CyberGuard 治理适配器和数字孪生
-domainpack/     角色、动作白名单与复测契约
-agentteams/     Worker、Skill 与 Element Web 打开方式
-docs/           架构、复用说明、录屏脚本与报告
-```
-
-## 安全边界
-
-默认模式只连接隔离数字孪生，不连接真实 PLC、BMS 或生产设备。生产接入需要设备协议适配、凭据隔离、部署审批与现场安全验证。
+默认配置只连接隔离数字孪生，不连接真实 PLC、BMS 或生产设备。若要接入生产环境，需要另外完成设备协议适配、身份与凭据隔离、不可变审计存储、部署审批和现场安全验证。
 
 ## License
 
-Apache-2.0。详见 `LICENSE`。
+[Apache License 2.0](LICENSE)

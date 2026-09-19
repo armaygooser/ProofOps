@@ -20,6 +20,12 @@
 - Added Docker Compose, GitHub Actions, backend/frontend tests, HTTP smoke test, reuse documentation and 55-second recording runbook.
 - Built and started both Docker images. The published endpoint passed the complete workflow and was reset for user review.
 
+## 2026-09-19 — Codex README publication
+
+- Reworked the GitHub README around the product's central claim: ProofOps is an industrial control demonstration built by migrating the CyberGuard trusted-agent governance base.
+- Added the verified live dashboard image, CI/stack badges, Mermaid governance flow, CyberGuard-to-ProofOps capability mapping, 60-second demo path, architecture, quick start and validation commands.
+- Preserved the public truth boundary: current reuse is a local CyberGuard v0.14 governance-contract adaptation; ProofOps does not yet call a CyberGuard API or import a CyberGuard Python package at runtime.
+- Verified all README relative links resolve and `git diff --check` passes after normalizing the file ending.
 ## Operational State
 
 - URL: `http://127.0.0.1:18766`
