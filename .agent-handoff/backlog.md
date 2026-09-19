@@ -10,6 +10,10 @@
 - [ ] Publish port 18766, replace `PROOFOPS_PUBLISHED_URL`, and capture the Element Web launch recording.
 - [ ] Capture Worker and tool receipts before labeling any screen a live AgentTeams model run.
 
+## GitHub Publication
+
+- [ ] Create a separate GitHub repository and add its remote only after the user chooses the owner/name and visibility.
+
 ## Optional Production Work
 
 - [ ] Persist the HMAC audit ledger in immutable storage across process restarts.

@@ -13,7 +13,9 @@
 - Element Web launch uses a Matrix room link to a Service Publishing URL; an embedded Matrix widget is not claimed.
 - The Vite production bundle is about 667KB before gzip and reports a non-blocking chunk-size advisory.
 
+- Public GitHub claims must say local CyberGuard contract adaptation; the current runtime does not call CyberGuard services or import a CyberGuard package.
+
 ## Unknowns / Confirmations Needed
 
 - The final AgentTeams Service Publishing URL is deployment-specific.
-- Final visual polish depends on user review of the running page.
+- Final visual polish depends on user review of the running page; the automated visual pass found only trivial cosmetic notes (04/05 panel bottom alignment, rollback button edge spacing, heartbeat KPI not warning-colored at 96.7% vs ≥99% target).

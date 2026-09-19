@@ -2,7 +2,9 @@
 
 > 面向工业操作的可信智能体决策系统。七个 Agent 调查，人类批准，受控执行器落地，独立角色复测，所有操作由哈希记录并可回滚。
 
-ProofOps 是独立于 CyberGuard 的演示产品，用 B2 冷却异常说明 CyberGuard 的治理基座可以迁移到工业运维。它复用了 CyberGuard 的治理契约和核心算法，同时用独立领域包约束工业动作，避免放宽原安全产品的动作白名单。
+ProofOps 是独立于 CyberGuard 的演示产品，用 B2 冷却异常说明 CyberGuard 的治理模式可以迁移到工业运维。它根据 CyberGuard v0.14 的治理契约实现本地工业适配器，同时用独立领域包约束工业动作，避免放宽原安全产品的动作白名单。
+
+> **演示边界：** 哈希、HMAC 审计、审批绑定、状态门和回滚是真实后端逻辑；工业遥测、七 Agent 调查、设备回执和独立复测环境是确定性模拟。当前没有运行时连接 CyberGuard、真实 BMS/PLC 或 AgentTeams Worker。详见 [演示真实性边界](docs/DEMO_TRUTH_BOUNDARY.md)。
 
 ## 60 秒看懂
 
